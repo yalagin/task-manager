@@ -28,7 +28,7 @@ class TaskController
 
     public function createTask(Request $request): JsonResponse
     {
-        $data = $request->attributes->all();
+        $data = $request->toArray();
         // Validate request data
         $validationErrors = TaskValidation::validateTaskData($data);
         if (!empty($validationErrors)) {
@@ -46,10 +46,9 @@ class TaskController
 
     public function updateTask(Request $request): JsonResponse
     {
-        $data = $request->attributes->all();
-        $id = $data['id'];
+        $id = $request->attributes->get('id');
         if (isset(self::$tasks[$id])) {
-            $data = $request->attributes->all();
+            $data = $request->toArray();
             $task = self::$tasks[$id];
             $task['title'] = $data['title'];
             $task['description'] = $data['description'];
@@ -67,8 +66,7 @@ class TaskController
 
     public function deleteTask(Request $request): JsonResponse
     {
-        $data = $request->attributes->all();
-        $id = $data['id'];
+        $id = $request->attributes->get('id');
         if (isset(self::$tasks[$id])) {
             unset(self::$tasks[$id]);
             return new JsonResponse(status:204);
